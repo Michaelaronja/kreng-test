@@ -39,15 +39,15 @@ services:
       - db
     image: phpmyadmin/phpmyadmin:latest
     ports:
-      - "8080:80" # Map port 80 of the container to port 8080 on host
+      - "8080:80"
     restart: always
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: password # Specify the root password of your MySQL/MariaDB instance
+      MYSQL_ROOT_PASSWORD: password
     networks:
       - wordpress-network
     volumes:
-      - /sessions # Optional: You can define a volume for session data if needed
+      - /sessions
 
 volumes:
   db_data: {}
