@@ -58,36 +58,48 @@ class Movie_Fetcher {
     
             if (isset($movies)) {
                 foreach ($movies as $movie) {
-    
+            
                     $title = $movie['name'];
-    
-                    // Check if a post with the same title and post type movie already exists
+            
+                    // Check if a post with the same title and post type movie already exists in DB
                     global $wpdb;
                     $post_exists = $wpdb->get_var($wpdb->prepare(
-                        "SELECT COUNT(*) FROM $wpdb->posts WHERE post_title = %s AND post_type = %s",
+                        "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = %s",
                         $title,
                         'movie'
                     ));
-    
-                    // If no matching post is found, create a new one
-                    if (!$post_exists) {
+        
+                    if ($post_exists) {
+                        $post_status = get_post_status($post_exists);
+                        
+                        // If the posts are in the trash, but not deleted from DB, publish them again 
+                        if ($post_status === 'trash') {
+                            wp_untrash_post($post_exists);
+
+                            wp_update_post(array(
+                                'ID' => $post_exists,
+                                'post_status' => 'publish',
+                            ));
+                        }
+                    } else {
+                        // Create new posts if they are not found in DB
                         $sku = $movie['sku'];
                         $url_key = $movie['url_key'];
                         $image_url = $movie['image']['url'];
                         $image_label = $movie['image']['label'];
                         $url = 'https://www.stockholmfilmfestival.se/' . $url_key;
-    
+            
                         $new_post_id = wp_insert_post(array(
                             'post_title'   => $title,
                             'post_type'    => 'movie',
                             'post_status'  => 'publish',
                         ));
-    
+            
                         if (!is_wp_error($new_post_id)) {
                             update_post_meta($new_post_id, 'sku', $sku);
                             update_post_meta($new_post_id, 'url', $url);
                             update_post_meta($new_post_id, 'image_url', $image_url);
-                        
+            
                             if (!empty($image_url)) {
                                 $attachment = media_sideload_image($image_url, $new_post_id, $image_label, 'id');
                                 if (!is_wp_error($attachment)) {
@@ -95,12 +107,8 @@ class Movie_Fetcher {
                                 }
                             }
                         } else {
-                            // Running error.log() in project didn't work in this small setup, and echoing error messages resulted in warning during activation of plugin: "The plugin generated 1061 characters of unexpected output during activation."
-                            // Therefor running error.log() here for good practice even if it does not work
                             error_log('Error creating post: ' . $new_post_id->get_error_message());
                         }
-                    } else {
-                        error_log("Post with title '$title' already exists.<br>");
                     }
                 }
             }
