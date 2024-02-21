@@ -1,33 +1,35 @@
 <?php
 class API_Client {
-    // Instance variables to store API endpoint och auth token
+
     private $graphql_endpoint;
 
-    // Constructor that creates new instances of the API Client Class with the API endpoint
     public function __construct($endpoint) {
         $this->graphql_endpoint = $endpoint;
     }
 
-    // Method that makes the GraphQL request to API
     public function make_graphql_request($query) {
-       
-        // Config alternativ for HTTP request including headers, method and content
-        $options = array(
-            'http' => array(
-                'method' => 'POST',
-                'header' => array(
-                    'Content-Type: application/json',
-                ),
-                'content' => json_encode(array('query' => $query)), // Convert GraphQL request to JSON
+        $curl_handle = curl_init();
+    
+        curl_setopt_array($curl_handle, array(
+            CURLOPT_URL => $this->graphql_endpoint,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode(array('query' => $query)),
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
             ),
-        );
+        ));
+    
+        $response = curl_exec($curl_handle);
 
-        // Create a stream context with the defined options
-        $context = stream_context_create($options);
-
-
-        // Make a HTTP request to the API endpoint with the defined alternatives and return the response
-        return file_get_contents($this->graphql_endpoint, false, $context);
+        if ($response === false) {
+            $error_message = curl_error($curl_handle);
+            echo "Something went wrong:" . $error_message;
+        }
+    
+        curl_close($curl_handle);
+    
+        return $response;
     }
 }
 ?>
