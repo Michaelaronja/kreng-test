@@ -23,7 +23,7 @@ const Slider = () => {
         const data = await response.json();
         setSlides(data);
       } catch (error) {
-        console.error("Error fetching slides:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -45,23 +45,25 @@ const Slider = () => {
   };
 
   return (
-    <div>
+    <div className={styles.root}>
       {isLoading && <div className={styles.loading}>Is loading...</div>}
       {slides.map((slide, idx) => (
-        <div
-          key={idx}
-          className={classes({
-            [styles.slide]: true,
-            [styles.active]: idx === currentIndex,
-          })}
-        >
-          <h1 className={styles.slideTitle}>{slide.title.rendered}</h1>
-          <img
-            className={styles.slideImage}
-            src={slide.meta.image_url}
-            alt={`Slide ${idx}`}
-          />
-        </div>
+        <a href={slide?.meta?.url} target="_blank">
+          <div
+            key={idx}
+            className={classes({
+              [styles.slide]: true,
+              [styles.active]: idx === currentIndex,
+            })}
+          >
+            <h1 className={styles.slideTitle}>{slide?.title?.rendered}</h1>
+            <img
+              className={styles.slideImage}
+              src={slide?.meta?.image_url}
+              alt={`Slide ${idx}`}
+            />
+          </div>
+        </a>
       ))}
 
       {slides.length > 0 && (

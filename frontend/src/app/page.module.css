@@ -9,11 +9,6 @@
   height: 100%;
 }
 
-.slider {
-  width: 40vw;
-  height: 100%;
-}
-
 @media screen and (min-width: 960px) {
   .main {
     display: flex;
