@@ -143,37 +143,33 @@ class Movie_Fetcher {
 
         register_post_type('movie', $args);
 
-        // Register post meta
-        register_post_meta('movie', 'sku', array(
-            'show_in_rest' => true,
-            'single' => true,
-            'type' => 'string',
-            'description' => 'Sku of product',
-            'auth_callback' => function() {
-                return current_user_can('edit_posts');
-            }
-        ));
+        $meta_fields = array(
+            array(
+                'name' => 'sku',
+                'description' => 'Product sku'
+            ),
+            array(
+                'name' => 'url',
+                'description' => 'Product url'
+            ),
+            // For easy access in frontend | avoiding making another request fetching featured image
+            array(
+                'name' => 'image_url',
+                'description' => 'Image url'
+            )
+        );
 
-        register_post_meta('movie', 'url', array(
-            'show_in_rest' => true,
-            'single' => true,
-            'type' => 'string',
-            'description' => 'Product url',
-            'auth_callback' => function() {
-                return current_user_can('edit_posts');
-            }
-        ));
-
-        // For easy access in frontend | avoiding making another request fetching featured image
-        register_post_meta('movie', 'image_url', array(
-            'show_in_rest' => true,
-            'single' => true,
-            'type' => 'string',
-            'description' => 'Image url',
-            'auth_callback' => function() {
-                return current_user_can('edit_posts');
-            }
-        ));
+        foreach ($meta_fields as $meta_field) {
+            register_post_meta('movie', $meta_field['name'], array(
+                'show_in_rest' => true,
+                'single' => true,
+                'type' => 'string',
+                'description' => $meta_field['description'],
+                'auth_callback' => function() {
+                    return current_user_can('edit_posts');
+                }
+            ));
+        }
     }
     
 }
