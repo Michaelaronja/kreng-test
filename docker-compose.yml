@@ -31,7 +31,7 @@ services:
     networks:
       - wordpress-network
     volumes:
-      - ./wp-content:/var/www/html/wp-content
+      - ./wp-movies-plugin:/var/www/html/wp-content/plugins/movies-plugin
 
   # PHPMyAdmin Service
   phpmyadmin:
