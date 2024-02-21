@@ -1,7 +1,13 @@
-# kreng-test
+# Kreng WP Plugin
 
-1. In your terminal of choice, clone the repository  with following command: `git clone git@github.com:Michaelaronja/kreng-test.git`
-2. Cd into the project and run `docker-compose up` to start the local wordpress environment.
-3. Go to `http://localhost:8000` and go through the WP installation
-4. Active the plugin Stockholm Filmfestival in your local WP dashboard to fetch the data needed for the presentation in the frontend
-5. Cd into the `frontend` folder and run `npm run dev` to start the local next.js project
+Run command `git clone git@github.com:Michaelaronja/kreng-test.git` in your terminal
+
+### Run Wordpress locally 
+1. Cd into project and run command `docker-compose up` to start the local Wordpress environment
+2. Go to `http://localhost:8000` and go through the WP installation
+3. Active the plugin Stockholm Filmfestival in your local WP dashboard
+
+### Start local development server
+1. Cd into the `frontend` folder and run `npm install`
+2. Run command `npm run dev` to start the server
+3. Go to `http://localhost:3000/`
